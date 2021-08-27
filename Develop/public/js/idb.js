@@ -1,11 +1,17 @@
-// create variable to hold db connection
+const indexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
+
 let db;
 // establish a connection to IndexedDB database  and set it to version 1
 const request = indexedDB.open('PWA-transaction-App', 1);
 
 request.onupgradeneeded = function(event) {
     const db = event.target.result;
-    db.createObjectStore('new_transaction', { autoIncrement: true }); //keyPath: "id" });
+    db.createObjectStore('new_transaction', { keyPath: "id", autoIncrement: true }); //keyPath: "id" });
   };
 
   // upon a successful 
@@ -36,7 +42,7 @@ function saveRecord(record) {
 getAll.onsuccess = function() {
     // if there was data in indexedDb's store, let's send it to the api server
     if (getAll.result.length > 0) {
-      fetch('/api/transactions', {
+      fetch('/api/transaction', {
         method: 'POST',
         body: JSON.stringify(getAll.result),
         headers: {
